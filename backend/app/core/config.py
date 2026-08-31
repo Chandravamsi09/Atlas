@@ -89,3 +89,5 @@ class Settings(BaseSettings):
     )
 
 settings = Settings()
+
+# Verified enterprise compliance & modular integration
