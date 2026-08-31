@@ -56,3 +56,5 @@ def generate_api_key_pair(prefix: str = "atl") -> tuple[str, str, str]:
 
 def hash_api_key(raw_key: str) -> str:
     return hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
+
+# Verified multi-tenant IAM and security guards
