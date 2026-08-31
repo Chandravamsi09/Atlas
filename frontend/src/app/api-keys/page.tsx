@@ -1,61 +1,52 @@
-import React from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Layers, Activity, Settings, ShieldCheck, Database, Terminal } from "lucide-react";
+'use client';
 
-export default function GenericModulePage() {
+import React, { useState } from "react";
+import { Sidebar } from "@/components/layout/sidebar";
+import { Key, Plus, Copy, Check, Shield } from "lucide-react";
+
+export default function ApiKeysPage() {
+  const [copied, setCopied] = useState(false);
+  const apiKey = "atl_live_local_dev_key";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(apiKey);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-[#090d16] text-slate-100">
       <Sidebar />
-      <main className="flex-1 p-8 bg-[#090d16]">
+      <main className="flex-1 p-8 flex flex-col h-screen overflow-y-auto">
         <header className="flex items-center justify-between pb-6 border-b border-slate-800">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">API Key Lifecycle Manager with Scoped Permissions, Rate Limiting Sliders, and Revocation</h1>
-            <p className="text-sm text-slate-400">Enterprise AI control plane interface and operational controls.</p>
+            <div className="flex items-center gap-2">
+              <Key className="h-6 w-6 text-indigo-400" />
+              <h1 className="text-2xl font-bold text-white tracking-tight">API Keys & Token Quotas</h1>
+            </div>
+            <p className="text-sm text-slate-400 mt-1">Multi-tenant authentication keys, RBAC permission scopes, and rate limits.</p>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline">Export Data</Button>
-            <Button>Save Changes</Button>
-          </div>
+          <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center gap-2">
+            <Plus className="h-4 w-4" /> Generate New API Key
+          </button>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Configuration & Workflow Matrix</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-6 rounded-lg bg-slate-900/50 border border-slate-800 font-mono text-xs text-slate-300 space-y-2">
-                <p className="text-indigo-400">// Active Enterprise Configuration</p>
-                <p>Status: Synchronized (Production)</p>
-                <p>Engine: Atlas Distributed Orchestrator v1.0.0</p>
-                <p>Tenant Isolation: Hard Multi-Tenant Enforced</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>System Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 text-sm text-slate-300">
-                <div className="flex justify-between items-center">
-                  <span>Cluster Health</span>
-                  <span className="text-emerald-400 font-medium">Healthy</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Replication Lag</span>
-                  <span>1.2ms</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Active Workers</span>
-                  <span>16 Nodes</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="mt-8 bg-[#111827] border border-slate-800 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Active Organization Keys (Acme Corp)</h2>
+          <div className="bg-[#090d16] border border-slate-800 rounded-lg p-4 flex items-center justify-between">
+            <div>
+              <div className="font-semibold text-slate-200">Production Live Key</div>
+              <div className="font-mono text-xs text-indigo-400 mt-1">{apiKey}</div>
+              <div className="text-xs text-slate-400 mt-1">Scopes: models:read, models:invoke, prompts:write • RPS Limit: 500</div>
+            </div>
+            <button
+              onClick={handleCopy}
+              className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg border border-slate-700 transition flex items-center gap-1.5"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? "Copied" : "Copy Key"}
+            </button>
+          </div>
         </div>
       </main>
     </div>

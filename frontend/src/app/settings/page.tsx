@@ -1,61 +1,76 @@
+'use client';
+
 import React from "react";
 import { Sidebar } from "@/components/layout/sidebar";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Layers, Activity, Settings, ShieldCheck, Database, Terminal } from "lucide-react";
+import { Settings, Save, Lock, Building, Users } from "lucide-react";
 
-export default function GenericModulePage() {
+export default function SettingsPage() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-[#090d16] text-slate-100">
       <Sidebar />
-      <main className="flex-1 p-8 bg-[#090d16]">
+      <main className="flex-1 p-8 flex flex-col h-screen overflow-y-auto">
         <header className="flex items-center justify-between pb-6 border-b border-slate-800">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Multi-Tenant Organization Settings, Member Management, and SSO Configuration</h1>
-            <p className="text-sm text-slate-400">Enterprise AI control plane interface and operational controls.</p>
+            <div className="flex items-center gap-2">
+              <Settings className="h-6 w-6 text-slate-300" />
+              <h1 className="text-2xl font-bold text-white tracking-tight">Platform Settings</h1>
+            </div>
+            <p className="text-sm text-slate-400 mt-1">Configure tenant identity, model provider credentials, and SSO SAML integrations.</p>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline">Export Data</Button>
-            <Button>Save Changes</Button>
-          </div>
+          <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center gap-2">
+            <Save className="h-4 w-4" /> Save Configuration
+          </button>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Configuration & Workflow Matrix</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-6 rounded-lg bg-slate-900/50 border border-slate-800 font-mono text-xs text-slate-300 space-y-2">
-                <p className="text-indigo-400">// Active Enterprise Configuration</p>
-                <p>Status: Synchronized (Production)</p>
-                <p>Engine: Atlas Distributed Orchestrator v1.0.0</p>
-                <p>Tenant Isolation: Hard Multi-Tenant Enforced</p>
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-[#111827] border border-slate-800 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Building className="h-5 w-5 text-indigo-400" /> Organization Profile
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-slate-400">Organization Name</label>
+                <input
+                  type="text"
+                  defaultValue="Acme Corporation"
+                  className="w-full bg-[#090d16] border border-slate-800 rounded-lg p-2.5 text-sm text-white mt-1"
+                />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <label className="text-xs text-slate-400">Tenant Identifier</label>
+                <input
+                  type="text"
+                  disabled
+                  defaultValue="org_acme_prod_01"
+                  className="w-full bg-[#090d16]/50 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-500 mt-1 font-mono"
+                />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>System Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 text-sm text-slate-300">
-                <div className="flex justify-between items-center">
-                  <span>Cluster Health</span>
-                  <span className="text-emerald-400 font-medium">Healthy</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Replication Lag</span>
-                  <span>1.2ms</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Active Workers</span>
-                  <span>16 Nodes</span>
-                </div>
+          <div className="bg-[#111827] border border-slate-800 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Lock className="h-5 w-5 text-emerald-400" /> Model Provider Vault
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-slate-400">OpenAI API Key (Encrypted at rest)</label>
+                <input
+                  type="password"
+                  defaultValue="sk-proj-********************************"
+                  className="w-full bg-[#090d16] border border-slate-800 rounded-lg p-2.5 text-sm text-white mt-1 font-mono"
+                />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <label className="text-xs text-slate-400">Anthropic API Key (Encrypted at rest)</label>
+                <input
+                  type="password"
+                  defaultValue="sk-ant-********************************"
+                  className="w-full bg-[#090d16] border border-slate-800 rounded-lg p-2.5 text-sm text-white mt-1 font-mono"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

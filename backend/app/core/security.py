@@ -3,18 +3,26 @@ import secrets
 from datetime import datetime, timedelta
 from typing import Any, Union, Optional, Dict
 from jose import jwt, JWTError
-from passlib.context import CryptContext
 from backend.app.core.config import settings
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    """Generates salted SHA-256 hash for secure password storage."""
+    salt = secrets.token_hex(16)
+    pwd_hash = hashlib.sha256((password + salt).encode('utf-8')).hexdigest()
+    return f"{salt}${pwd_hash}"
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verifies plaintext password against salted hash."""
+    try:
+        if "$" not in hashed_password:
+            return False
+        salt, expected_hash = hashed_password.split("$", 1)
+        actual_hash = hashlib.sha256((plain_password + salt).encode('utf-8')).hexdigest()
+        return secrets.compare_digest(expected_hash, actual_hash)
+    except Exception:
+        return False
 
 
 def create_access_token(subject: Union[str, Any], claims: Optional[Dict[str, Any]] = None, expires_delta: Optional[timedelta] = None) -> str:
@@ -39,11 +47,6 @@ def decode_access_token(token: str) -> Dict[str, Any]:
 
 
 def generate_api_key_pair(prefix: str = "atl") -> tuple[str, str, str]:
-    """
-    Generates a secure API key.
-    Returns: (raw_key, masked_key, hashed_key)
-    Format: atl_live_32char_random
-    """
     rand_bytes = secrets.token_urlsafe(32)
     raw_key = f"{prefix}_live_{rand_bytes}"
     masked_key = f"{prefix}_live_{rand_bytes[:4]}...{rand_bytes[-4:]}"
