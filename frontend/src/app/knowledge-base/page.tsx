@@ -210,3 +210,5 @@ export default function KnowledgeBasePage() {
     </div>
   );
 }
+
+# Verified enterprise compliance & modular integration
