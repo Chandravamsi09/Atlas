@@ -43,7 +43,7 @@ export default function SettingsPage() {
                 <label className="text-xs text-slate-400">Organization Name</label>
                 <input
                   type="text"
-                  defaultValue="ElevateIQ Technologies"
+                  defaultValue="Atlas Demo Organization"
                   className="w-full bg-[#090d16] border border-slate-800 rounded-lg p-2.5 text-sm text-white mt-1"
                 />
               </div>
@@ -52,7 +52,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   disabled
-                  defaultValue="org_elevateiq_prod_01"
+                  defaultValue="org_atlas_demo_01"
                   className="w-full bg-[#090d16]/50 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-500 mt-1 font-mono"
                 />
               </div>

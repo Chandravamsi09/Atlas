@@ -1,7 +1,17 @@
 import os
+import secrets
 from typing import List, Dict, Any, Optional
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _get_default_secret_key() -> str:
+    env_secret = os.getenv("SECRET_KEY")
+    if env_secret:
+        return env_secret
+    if os.getenv("ENVIRONMENT") == "production":
+        raise ValueError("SECRET_KEY environment variable must be set in production mode.")
+    return secrets.token_urlsafe(32)
 
 
 class Settings(BaseSettings):
@@ -10,9 +20,10 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = Field(default="development", description="Environment: development, staging, production")
     DEBUG: bool = Field(default=False)
-    SECRET_KEY: str = Field(default="atlas-super-secret-jwt-signing-key-32-chars-min-prod", description="JWT secret key")
+    SECRET_KEY: str = Field(default_factory=_get_default_secret_key, description="JWT secret key from environment")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
     ALGORITHM: str = "HS256"
+    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8000", "*"]
 
     # Database Settings
     DATABASE_URL: str = Field(
@@ -43,30 +54,32 @@ class Settings(BaseSettings):
     OPENAI_ORG_ID: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None
     AWS_BEDROCK_REGION: str = "us-east-1"
-    AWS_ACCESS_KEY_ID: Optional[str] = None
-    AWS_SECRET_ACCESS_KEY: Optional[str] = None
-    VERTEX_AI_PROJECT_ID: Optional[str] = None
-    VERTEX_AI_LOCATION: str = "us-central1"
-    AZURE_OPENAI_ENDPOINT: Optional[str] = None
-    AZURE_OPENAI_API_KEY: Optional[str] = None
-    GROQ_API_KEY: Optional[str] = None
-    MISTRAL_API_KEY: Optional[str] = None
-    VLLM_BASE_URL: Optional[str] = "http://localhost:8000/v1"
-    OLLAMA_BASE_URL: Optional[str] = "http://localhost:11434"
+    COHERE_API_KEY: Optional[str] = None
+    VLLM_BASE_URL: Optional[str] = "http://localhost:8001/v1"
+    OLLAMA_BASE_URL: Optional[str] = "http://localhost:11434/v1"
 
-    # Telemetry & Observability
-    OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = "http://localhost:4317"
-    OTEL_SERVICE_NAME: str = "atlas-backend-gateway"
-    ENABLE_METRICS: bool = True
-    ENABLE_TRACING: bool = True
+    # Model Router Fallback Matrix
+    FALLBACK_CASCADE_TIERS: Dict[str, List[str]] = {
+        "gpt-4o": ["claude-3-5-sonnet", "mistral-large", "mock-gpt-4o"],
+        "claude-3-5-sonnet": ["gpt-4o", "gemini-1.5-pro", "mock-claude-3.5"],
+        "gpt-4o-mini": ["claude-3-haiku", "gemini-1.5-flash", "mock-gpt-4o"],
+    }
 
-    # CORS Origins
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    ]
+    # OpenTelemetry & Observability
+    OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
+    OTEL_SERVICE_NAME: str = "atlas-ai-gateway"
+    ENABLE_DISTRIBUTED_TRACING: bool = True
+
+    # Guardrails & DLP
+    GUARDRAILS_MAX_INPUT_TOKENS: int = 8192
+    ENABLE_PROMPT_INJECTION_SHIELD: bool = True
+    ENABLE_PII_REDACTION: bool = True
+
+    # RAG Index Defaults
+    DEFAULT_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    EMBEDDING_DIMENSION: int = 1536
+    RAG_TOP_K_DEFAULT: int = 5
+    RAG_RERANK_TOP_N: int = 3
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -74,15 +87,5 @@ class Settings(BaseSettings):
         case_sensitive=True,
         extra="ignore"
     )
-
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def assemble_cors_origins(cls, v: Any) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
-            return v
-        return []
-
 
 settings = Settings()

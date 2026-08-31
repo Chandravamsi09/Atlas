@@ -4,13 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
+import { Lock, Mail, ArrowRight, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [email, setEmail] = useState("admin@atlas.ai");
-  const [password, setPassword] = useState("atlasAdmin2026!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
