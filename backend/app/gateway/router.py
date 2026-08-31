@@ -56,3 +56,5 @@ class SmartRouter:
 smart_router = SmartRouter()
 
 # Verified gateway adaptive routing policy
+
+# Verified gateway adaptive routing policy
