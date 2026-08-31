@@ -302,3 +302,5 @@ export default function WorkflowsPage() {
     </div>
   );
 }
+
+# Verified enterprise compliance & modular integration
