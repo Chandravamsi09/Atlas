@@ -1,10 +1,17 @@
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
-import { Settings, Save, Lock, Building, Users } from "lucide-react";
+import { Settings, Save, Lock, Building, Check } from "lucide-react";
 
 export default function SettingsPage() {
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
   return (
     <div className="flex min-h-screen bg-[#090d16] text-slate-100">
       <Sidebar />
@@ -17,8 +24,12 @@ export default function SettingsPage() {
             </div>
             <p className="text-sm text-slate-400 mt-1">Configure tenant identity, model provider credentials, and SSO SAML integrations.</p>
           </div>
-          <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center gap-2">
-            <Save className="h-4 w-4" /> Save Configuration
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg shadow-sm transition flex items-center gap-2"
+          >
+            {saved ? <Check className="h-4 w-4 text-emerald-300" /> : <Save className="h-4 w-4" />}
+            {saved ? "Saved Successfully!" : "Save Configuration"}
           </button>
         </header>
 
@@ -32,7 +43,7 @@ export default function SettingsPage() {
                 <label className="text-xs text-slate-400">Organization Name</label>
                 <input
                   type="text"
-                  defaultValue="Acme Corporation"
+                  defaultValue="ElevateIQ Technologies"
                   className="w-full bg-[#090d16] border border-slate-800 rounded-lg p-2.5 text-sm text-white mt-1"
                 />
               </div>
@@ -41,7 +52,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   disabled
-                  defaultValue="org_acme_prod_01"
+                  defaultValue="org_elevateiq_prod_01"
                   className="w-full bg-[#090d16]/50 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-500 mt-1 font-mono"
                 />
               </div>

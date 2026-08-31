@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { api, getAuthToken, setAuthSession, clearAuthSession } from "@/lib/api";
 
 interface User {
@@ -29,14 +30,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const PUBLIC_ROUTES = ["/login", "/register"];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
-    // Check localStorage on initial load
     try {
       const storedToken = localStorage.getItem("atlas_token");
       const storedUser = localStorage.getItem("atlas_user");
@@ -47,18 +51,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(JSON.parse(storedUser));
         if (storedOrg) setOrganization(JSON.parse(storedOrg));
       } else {
-        // Seed default developer account for immediate testing
-        const defaultUser: User = { id: "usr_admin_01", email: "admin@atlas.ai", full_name: "Atlas Administrator" };
-        const defaultOrg: Organization = { id: "org_acme_prod_01", name: "Acme Corporation", slug: "acme-corp", role: "owner" };
-        setUser(defaultUser);
-        setOrganization(defaultOrg);
+        setUser(null);
+        setOrganization(null);
+        setToken(null);
+        // If not on a public route, redirect to login
+        if (!PUBLIC_ROUTES.includes(pathname)) {
+          router.push("/login");
+        }
       }
     } catch (e) {
       console.error("Failed to load auth state from storage", e);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [pathname, router]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -91,9 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setOrganization(null);
     setToken(null);
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
+    router.push("/login");
   };
 
   return (
@@ -102,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         organization,
         token,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && !!token,
         isLoading,
         login,
         register,
