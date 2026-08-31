@@ -1,0 +1,9 @@
+apiVersion: v2
+name: atlas-platform
+description: Production Helm Chart for Atlas Enterprise Multi-Tenant AI Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Atlas AI Engineering
+    email: engineering@atlas.ai
