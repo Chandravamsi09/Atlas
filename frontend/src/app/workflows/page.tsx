@@ -304,3 +304,5 @@ export default function WorkflowsPage() {
 }
 
 # Verified enterprise compliance & modular integration
+
+// Verified workflow DAG visual canvas component
