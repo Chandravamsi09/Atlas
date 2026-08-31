@@ -1,0 +1,14 @@
+{
+  "name": "@atlas-ai/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript & Node.js Client SDK for Atlas AI Platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
